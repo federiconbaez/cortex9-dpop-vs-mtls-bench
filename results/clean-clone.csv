@@ -1,0 +1,11 @@
+round,scenario,requests,ok,failed,req_per_s,p50_us,p99_us,client_cpu_us_per_req,server_cpu_us_per_req,bytes_per_req,handshakes,resumed
+1,bearer_keepalive,3000,3000,0,35576,26.0,37.6,12.3,13.3,426,1,0
+1,dpop_es256_keepalive,3000,3000,0,2387,394.4,711.4,153.9,250.0,993,1,0
+1,dpop_eddsa_keepalive,3000,3000,0,11350,85.0,113.7,31.6,53.3,931,1,0
+1,mtls_keepalive,3000,3000,0,35864,26.8,34.6,12.2,16.7,511,1,0
+1,bearer_newconn_resume,600,600,0,3703,252.0,642.4,149.9,166.7,1261,600,599
+1,dpop_es256_newconn_resume,600,600,0,1484,634.1,1126.3,306.7,383.3,1828,600,599
+1,mtls_newconn_resume,600,600,0,3621,259.1,427.2,154.4,183.3,1345,600,599
+1,bearer_newconn_full,600,600,0,2569,362.9,758.3,255.8,166.7,1609,600,0
+1,dpop_es256_newconn_full,600,600,0,1278,743.3,1145.9,405.7,416.7,2176,600,0
+1,mtls_newconn_full,600,600,0,1947,493.6,809.4,273.6,283.3,2211,600,0
