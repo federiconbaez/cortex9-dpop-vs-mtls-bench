@@ -55,6 +55,19 @@ Lectura, contra las hipótesis prerregistradas:
 
 `cargo test`: 3/3 (el de punta a punta recorre los 9 controles y 12 escenarios). Ningún test se saltea.
 
+### Qué prueba y qué no el 9/9 controles y los 0 requests fallidos
+
+- **Prueba**:
+  - Los chequeos de ligadura del servidor están conectados. Acepta bearer, DPoP ES256, DPoP EdDSA y mTLS válidos.
+  - Rechaza una vez cada uno de los 5 casos negativos: la misma prueba DPoP repetida, un token DPoP presentado como bearer, una prueba firmada con otra clave, mTLS con otro certificado y mTLS sin certificado.
+  - Los números de rendimiento salen de un camino que funciona, porque no falló ningún request.
+- **No prueba**:
+  - No es una evaluación de seguridad: cada control corre una sola vez y solo cubre esos 9 casos.
+  - Nada sobre el compromiso de la clave DPoP del cliente o de la clave de su certificado: con la clave, el atacante pasa los chequeos.
+  - Nada sobre el replay entre servidores distintos; para eso está `dpop-replay-mesh`.
+  - Nada sobre variaciones de `iat`, `htu` o `ath` más allá de las que prueba el servidor, ni sobre el robo del token sin la clave en otros escenarios.
+- **Los controles los diseñamos nosotros.**
+
 ### Nivel de verificación
 
 **B**: el mecanismo está medido, con controles funcionales y dos rondas más una en un clon limpio. No es B+ porque no compara contra una implementación de referencia externa. No es C porque no hubo concurrencia ni red real.
@@ -85,6 +98,16 @@ HS256 access tokens with `cnf`; DPoP proofs (ES256 via `p256`, EdDSA via `ed2551
 ### Measurement
 
 Pre-registered. `--check` passed (9/9 controls, 0 failed requests, exact resumption counts). Two rounds, plus one in a clean clone (table above). H1 holds: with keep-alive, mTLS costs about the same as bearer, plus 85 bytes. H2 holds: DPoP costs one sign and one verify per request; throughput falls 15–16× with ES256 (pure-Rust `p256`) and 3.3–3.6× with EdDSA, plus 505–567 bytes. H3 holds: on a new connection without resumption, mTLS adds 604 bytes, about 160 µs p50 and 150–183 µs of server CPU over bearer; with resumption it is within 1–3 % of bearer. H4: round-to-round variation is up to 9 % in req/s and 36 % in p99.
+
+### What 9/9 controls and 0 failed requests prove and what they don't
+
+- **They prove** that the server's binding checks are wired: valid bearer, DPoP ES256, DPoP EdDSA and mTLS requests are accepted, and each of 5 negatives is rejected once (replayed DPoP proof, DPoP token sent as bearer, proof signed with another key, mTLS with another certificate, mTLS without a certificate). The performance numbers come from a working path.
+- **They are not a security evaluation**: each control runs once and only covers those 9 cases.
+- **They don't cover**:
+  - compromise of the client's DPoP or certificate key;
+  - cross-server replay (see `dpop-replay-mesh`);
+  - wider `iat`, `htu` or `ath` variations.
+- **The controls are ours.**
 
 ### Verification level
 
